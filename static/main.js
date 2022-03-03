@@ -5,6 +5,8 @@ function getCurrentTimestamp() {
 	return new Date();
 }
 
+let question;
+
 /**
  * Renders a message on the chat screen based on the given arguments.
  * This is called from the `showUserMessage` and `showBotMessage`.
@@ -44,6 +46,7 @@ function renderMessageToScreen(args) {
  * Displays the user message on the chat screen. This is the right side message.
  */
 function showUserMessage(message, datetime) {
+    question = message;
 	renderMessageToScreen({
 		text: message,
 		time: datetime,
@@ -71,8 +74,15 @@ $('#send_button').on('click', function (e) {
 	$('#msg_input').val('');
 
 	// show bot message
-	setTimeout(function () {
-		showBotMessage(randomstring());
+	setTimeout(async function () {
+        // const xhr = new XMLHttpRequest()
+        // let response = xhr.open("GET", "http://127.0.0.1:5000/chatbot/"+question);
+        let response = await fetch("http://127.0.0.1:5000/chatbot/"+question);
+        response.json().then((out) => {
+            showBotMessage(out.answer);
+            console.log(out.answer);
+          });
+		// showBotMessage(response);
 	}, 300);
 });
 
